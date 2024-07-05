@@ -7,19 +7,20 @@ directory = input('Enter filepath: ')
 lastNameHash = {}
 idHash = {}
 
-def buildDictionaries():
+
+def build_dictionaries():
     for file in os.listdir(directory):
         if file.startswith('.'):
             continue
         filepath = os.path.join(directory, file)
         if os.path.isfile(filepath):
-            with open(filepath, 'r') as file:
-                line = file.readline().strip()
+            with open(filepath, 'r') as file2:
+                line = file2.readline().strip()
                 if line:
-                    id, firstName, lastName, hireYear = line.split(',')
-                    employee = Employee.Employee(id, firstName, lastName, hireYear)
-                    lastNameHash[lastName] = employee
-                    idHash[id] = employee
+                    employee_id, first_name, last_name, hire_year = line.split(',')
+                    employee = Employee.Employee(employee_id, first_name, last_name, hire_year)
+                    lastNameHash[last_name] = employee
+                    idHash[employee_id] = employee
 
 
 def serialize_employee_files():
@@ -32,23 +33,23 @@ def print_directory_list():
             continue
         filepath = os.path.join(directory, file)
         if os.path.isfile(filepath):
-            with open(filepath, 'r') as file:
-                line = file.readline().strip()
+            with open(filepath, 'r') as file2:
+                line = file2.readline().strip()
                 if line:
-                    id, firstName, lastName, hireYear = line.split(',')
-                    employee = Employee.Employee(id, firstName, lastName, hireYear)
+                    employee_id, first_name, last_name, hire_year = line.split(',')
+                    employee = Employee.Employee(employee_id, first_name, last_name, hire_year)
                     print(employee)
 
 
-def deleteEmployee():
-    employeeToDelete = input("enter employee id: ")
-    filepath = os.path.join(directory, employeeToDelete + ".txt")
+def delete_employee():
+    employee_to_delete = input("enter employee id: ")
+    filepath = os.path.join(directory, employee_to_delete + ".txt")
 
     try:
         os.remove(filepath)
-        print(f"The employee {employeeToDelete} has been deleted successfully.")
+        print(f"The employee {employee_to_delete} has been deleted successfully.")
     except FileNotFoundError:
-        print(f"The employee {employeeToDelete} does not exist.")
+        print(f"The employee {employee_to_delete} does not exist.")
     except PermissionError:
         print(f"Permission denied: {filepath}.")
     except Exception as e:
@@ -73,34 +74,35 @@ def get_next_available_id():
 
     return next_id
 
-def createEmployee():
-    fname = input("enter a first name: ")
-    lname = input("enter a last name: ")
+
+def create_employee():
+    first_name = input("enter a first name: ")
+    last_name = input("enter a last name: ")
     year = input('enter the year hired: ')
 
-    employee = Employee.Employee(get_next_available_id(), fname, lname, year)
+    employee = Employee.Employee(get_next_available_id(), first_name, last_name, year)
     save_new_entry(employee)
     return employee
 
 
-def updateEmployee():
-    runUpdate = True
+def update_employee():
+    run_update = True
 
+    temp = input("Enter Id of who you want to update: ")
+    employee_file = find_employee(temp)
     try:
-        temp = input("Enter Id of who you want to update: ")
-        employeeFile = find_employee(temp)
-        if employeeFile is None:
+        if employee_file is None:
             print("employee not found")
             return
-        with open(employeeFile, 'r') as file:
+        with open(employee_file, 'r') as file:
             line = file.readline().strip()
             if line:
-                id, firstName, lastName, hireYear = line.split(',')
-                employee = Employee.Employee(id, firstName, lastName, hireYear)
+                employee_id, first_name, last_name, hire_year = line.split(',')
+                employee = Employee.Employee(employee_id, first_name, last_name, hire_year)
     except FileNotFoundError:
         print(f"The employee {temp} does not exist.")
-        runUpdate = False
-    while runUpdate:
+        run_update = False
+    while run_update:
         hold = input(f'1 - Change First Name\n'
                      f'2 - Change Last Name\n'
                      f'3 - Change Hire Year\n'
@@ -113,7 +115,7 @@ def updateEmployee():
             employee.sethireyear(input('Enter new hire year: '))
         if hold == '4':
             save_new_entry(employee)
-            runUpdate = False
+            run_update = False
 
 
 def find_employee(employee_id):
@@ -128,12 +130,12 @@ def save_new_entry(employee):
         file.write(str(employee))
 
 
-def print_employee(filePathToEmployee):
-    with open(filePathToEmployee, 'r') as file:
+def print_employee(file_path_to_employee):
+    with open(file_path_to_employee, 'r') as file:
         line = file.readline().strip()
         if line:
-            id, firstName, lastName, hireYear = line.split(',')
-            employee = Employee.Employee(id, firstName, lastName, hireYear)
+            employee_id, first_name, last_name, hire_year = line.split(',')
+            employee = Employee.Employee(employee_id, first_name, last_name, hire_year)
             print(employee)
 
 
@@ -158,22 +160,22 @@ def main():
         if command == '2':
             directory = input('Enter directory: ')
         if command == '3':
-            employeeFile = find_employee(input('Enter Id of Employee: '))
-            if employeeFile is None:
+            employee_file = find_employee(input('Enter Id of Employee: '))
+            if employee_file is None:
                 print("employee not found")
                 continue
-            print_employee(employeeFile)
+            print_employee(employee_file)
         if command == '4':
-            deleteEmployee()
+            delete_employee()
         if command == '5':
-            createEmployee()
+            create_employee()
         if command == '6':
-            updateEmployee()
+            update_employee()
         if command == '7':
             quitProgram = True
 
 
 print("Building indexes...")
-buildDictionaries();
+build_dictionaries()
 print("Done\n")
 main()
