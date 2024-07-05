@@ -35,8 +35,23 @@ def build_dictionaries():
 
 
 @measure_time
-def serialize_employee_files():
-    return
+def serialize_employees():
+    serialized_dir = os.path.join(directory, 'serialized_employees')
+    if not os.path.exists(serialized_dir):
+        os.makedirs(serialized_dir)
+
+    for file in os.listdir(serialized_dir):
+        file_path = os.path.join(serialized_dir, file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(f'Failed to delete {file_path}. Reason: {e}')
+
+    for employee in idHash.values():
+        serialized_path = os.path.join(serialized_dir, f'{employee.getid}.pkl')
+        with open(serialized_path, 'wb') as serial_file:
+            pickle.dump(employee, serial_file)
 
 
 def print_directory_list():
