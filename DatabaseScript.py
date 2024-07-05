@@ -8,6 +8,17 @@ lastNameHash = {}
 idHash = {}
 
 
+def measure_time(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f'{func.__name__} took {start-end} seconds')
+        return result
+    return wrapper
+
+
+@measure_time
 def build_dictionaries():
     for file in os.listdir(directory):
         if file.startswith('.'):
@@ -23,6 +34,7 @@ def build_dictionaries():
                     idHash[employee_id] = employee
 
 
+@measure_time
 def serialize_employee_files():
     return
 
@@ -56,6 +68,7 @@ def delete_employee():
         print(f"An error occurred: {e}.")
 
 
+@measure_time
 def get_next_available_id():
     existing_ids = set()
 
@@ -118,6 +131,7 @@ def update_employee():
             run_update = False
 
 
+@measure_time
 def find_employee(employee_id):
     filepath = os.path.join(directory, employee_id + ".txt")
     if os.path.exists(filepath):
